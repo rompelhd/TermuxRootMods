@@ -1,0 +1,40 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+User=$(whoami)
+Hostname=$(hostname)
+Home=$HOME
+Term="xterm-256color"
+Shell="/data/data/com.termux/files/usr/bin/bash"
+AliasFile="/sdcard/.aliases"
+
+if (( EUID == 0 )); then
+    PS1='# '
+else
+    PS1='$ '
+fi
+
+PS1="$User@$Hostname:\w $PS1"
+
+export TERM=$Term
+export HOME=$Home
+export HOSTNAME=$Hostname
+export SHELL=$Shell
+export USER=$User
+export PATH=$PATH:/data/data/com.termux/files/usr/bin
+
+temp_bashrc=$(mktemp)
+echo "export TERM='$Term'" > $temp_bashrc
+echo "export HOME='$Home'" >> $temp_bashrc
+echo "export HOSTNAME='$Hostname'" >> $temp_bashrc
+echo "export SHELL='$Shell'" >> $temp_bashrc
+echo "export USER='$User'" >> $temp_bashrc
+echo "export PATH='$PATH:/data/data/com.termux/files/usr/bin'" >> $temp_bashrc
+echo "export PS1='$PS1'" >> $temp_bashrc
+
+if [ -f "$AliasFile" ]; then
+    echo "if [ -f '$AliasFile' ]; then . '$AliasFile'; fi" >> $temp_bashrc
+fi
+
+exec $Shell --rcfile $temp_bashrc
+
+trap "rm -f $temp_bashrc" EXIT
