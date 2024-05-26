@@ -1,0 +1,12 @@
+# .aliases by Rompelhd 2024
+
+alias la='ls -A'
+alias ll='ls -l'
+alias lo='ls -al'
+alias ls='ls --color=auto'
+
+# Functions which I'm gonna count as aliases
+getperms(){ pm get-privapp-permissions $1 | sed "s/, /\n/g"
+}
+getdenyperms(){ pm get-privapp-deny-permissions $1 | sed "s/, /\n/g"
+}
