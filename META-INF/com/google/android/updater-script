@@ -1,0 +1,26 @@
+#MAGISK
+
+# Mount system and vendor as read/write
+mount -o rw,remount /system
+mount -o rw,remount /vendor
+
+# Copy files to the appropriate locations
+ui_print "Copying mkshrc to /system/etc"
+cp -f $MODPATH/system/etc/mkshrc /system/etc/mkshrc
+set_perm 0 0 0755 /system/etc/mkshrc
+
+# Copy custom scripts if any
+if [ -f $MODPATH/customize.sh ]; then
+  ui_print "Executing customize.sh"
+  sh $MODPATH/customize.sh
+fi
+
+# Set permissions
+set_perm_recursive 0 0 0755 0644 $MODPATH/system
+set_perm 0 0 0755 /system/etc/mkshrc
+
+ui_print "Installation complete!"
+
+# Clean up
+mount -o ro,remount /system
+mount -o ro,remount /vendor
