@@ -1,11 +1,25 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+greenColour="\033[1;32m"
+endColour="\033[0m"
+redColour="\033[1;31m"
+blueColour="\033[1;34m"
+yellowColour="\033[1;33m"
+purpleColour="\033[1;35m"
+turquoiseColour="\033[1;36m"
+grayColour="\033[1;37m"
+
 User=$(whoami)
 Hostname=$(hostname)
 Home=$HOME
 Term="xterm-256color"
 Shell="/data/data/com.termux/files/usr/bin/bash"
 AliasFile="/sdcard/.aliases"
+TempDir="/data/data/com.termux/files/usr/tmp"
+
+if [ "$TMPDIR" != "$TempDir" ]; then
+  export TMPDIR="$TempDir"
+fi
 
 if (( EUID == 0 )); then
     PS1='# '
@@ -13,7 +27,7 @@ else
     PS1='$ '
 fi
 
-PS1="$User@$Hostname:\w $PS1"
+PS1="${redColour}${User}${endColour}@${greenColour}${Hostname}${endColour}:\w $PS1"
 
 export TERM=$Term
 export HOME=$Home
@@ -22,19 +36,19 @@ export SHELL=$Shell
 export USER=$User
 export PATH=$PATH:/data/data/com.termux/files/usr/bin
 
-temp_bashrc=$(mktemp)
-echo "export TERM='$Term'" > $temp_bashrc
-echo "export HOME='$Home'" >> $temp_bashrc
-echo "export HOSTNAME='$Hostname'" >> $temp_bashrc
-echo "export SHELL='$Shell'" >> $temp_bashrc
-echo "export USER='$User'" >> $temp_bashrc
-echo "export PATH='$PATH:/data/data/com.termux/files/usr/bin'" >> $temp_bashrc
-echo "export PS1='$PS1'" >> $temp_bashrc
+temp_bashrc="$TempDir/bashrc.$$"
+echo "export TERM='$Term'" > "$temp_bashrc"
+echo "export HOME='$Home'" >> "$temp_bashrc"
+echo "export HOSTNAME='$Hostname'" >> "$temp_bashrc"
+echo "export SHELL='$Shell'" >> "$temp_bashrc"
+echo "export USER='$User'" >> "$temp_bashrc"
+echo "export PATH='$PATH:/data/data/com.termux/files/usr/bin'" >> "$temp_bashrc"
+echo "export PS1='$PS1'" >> "$temp_bashrc"
 
 if [ -f "$AliasFile" ]; then
-    echo "if [ -f '$AliasFile' ]; then . '$AliasFile'; fi" >> $temp_bashrc
+    echo "if [ -f '$AliasFile' ]; then . '$AliasFile'; fi" >> "$temp_bashrc"
 fi
 
-exec $Shell --rcfile $temp_bashrc
+exec "$Shell" --rcfile "$temp_bashrc"
 
 trap "rm -f $temp_bashrc" EXIT
