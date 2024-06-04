@@ -19,3 +19,18 @@ else
   cp -rf $SDCARD/.aliases $SDCARD/.aliases.bak
   cp -rf $MODPATH/custom/.aliases $SDCARD
 fi
+
+if [ ! -d /data/data/com.termux/files/root-home ]; then
+  mkdir /data/data/com.termux/files/root-home
+  ui_print "   Created root home folder"
+else
+  ui_print "   Root home folder exist"
+fi
+
+if [ -f $MODPATH/system/etc/servistatus ]; then
+  cp $MODPATH/system/etc/servistatus /data/data/com.termux/files/usr/bin
+  chmod +x /data/data/com.termux/files/usr/bin/servistatus
+  ui_print "   Servistatus copied and set executable permission on com.termux/files/usr/bin"
+else
+  ui_print "   Servistatus not found in /system/etc."
+fi
