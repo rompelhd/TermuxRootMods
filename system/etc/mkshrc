@@ -10,7 +10,7 @@ turquoiseColour="\033[1;36m"
 grayColour="\033[1;37m"
 
 User=$(whoami)
-Hostname=$(hostname)
+Hostname="android"
 Home=$HOME
 Term="xterm-256color"
 Shell="/data/data/com.termux/files/usr/bin/bash"
@@ -22,12 +22,13 @@ if [ "$TMPDIR" != "$TempDir" ]; then
 fi
 
 if (( EUID == 0 )); then
+    Home="/data/data/com.termux/files/root-home"
     PS1='# '
 else
     PS1='$ '
 fi
 
-PS1="${redColour}${User}${endColour}@${greenColour}${Hostname}${endColour}:\w $PS1"
+PS1="${redColour}${User}${orangeColour}@${yellowColour}${Hostname}${endColour}:\w $PS1"
 
 export TERM=$Term
 export HOME=$Home
