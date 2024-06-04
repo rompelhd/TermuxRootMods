@@ -1,10 +1,42 @@
-# TermuxRootMods
-TermuxRootMods is a Magisk module available on GitHub that enhances the Termux experience for rooted devices. This module offers several improvements:
+<p align="center">
+    <img src= "https://github.com/rompelhd/TermuxRootMods/assets/75935831/0166a66b-68cd-415a-9205-56f20f9b1140" alt="Termux"
+</p>
 
-- Root Shell Replacement: It replaces the default shell with bash, providing additional functionalities like the ability to clear the screen with Ctrl + L. This allows for a more convenient and familiar shell environment for users.
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="https://apache.org/licenses/LICENSE-2.0.txt"><img src="https://img.shields.io/badge/License-Apache%20License%20-green.svg" alt="License: Apache License"></a>
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/Build-Passing-green" alt="Build Passing">
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/Version-v1.0.1-blue" alt="Version">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://img.shields.io/badge/Author-rompelhd-red" alt="Author: rompelhd">
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/Magisk-v20.4%2B-blue" alt="Magisk v20.4+">
+    </td>
+    <td align="center">
+      <img src="https://img.shields.io/badge/Termux-aarch64%20%7C%20armhf%20%7C%20x86--64-green" alt="Termux: aarch64 armhf x86-64">
+    </td>
+  </tr>
+</table>
 
-- Aliases Configuration: It adds a file named .aliases to the /sdcard/ directory. This file contains user-defined aliases that can streamline common commands and improve productivity within the Termux environment.
+</br>
 
-- Service Monitoring Script: Additionally, TermuxRootMods includes a bash script that enables users to monitor running services. This script provides insights into the currently active services, offering users better control and visibility over system processes.
+<p align="center">
+  TermuxRootMods is a Magisk module that enhances the Termux experience for rooted devices. This module offers several improvements:
 
-These enhancements aim to optimize the usage of Termux on rooted devices, providing users with a more feature-rich and efficient command-line environment.
+  - Root Shell Replacement: It replaces the default shell with bash, providing additional functionalities like the ability to clear the screen with Ctrl + L. This allows for a more convenient and familiar shell environment for users.
+
+  - Aliases Configuration: It adds a file named .aliases to the /sdcard/ directory. This file contains user-defined aliases that can streamline common commands and improve productivity within the Termux environment.
+
+  - Service Monitoring Script: Additionally, TermuxRootMods includes a bash script that enables users to monitor running services. This script provides insights into the currently active services, offering users better control and visibility over system processes.
+
+  These enhancements aim to optimize the usage of Termux on rooted devices, providing users with a more feature-rich and efficient command-line environment.
+</p>
