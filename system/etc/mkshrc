@@ -16,6 +16,7 @@ Term="xterm-256color"
 Shell="/data/data/com.termux/files/usr/bin/bash"
 AliasFile="/sdcard/.aliases"
 TempDir="/data/data/com.termux/files/usr/tmp"
+LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
 
 if [ "$TMPDIR" != "$TempDir" ]; then
   export TMPDIR="$TempDir"
@@ -30,6 +31,7 @@ fi
 
 PS1="${redColour}${User}${orangeColour}@${yellowColour}${Hostname}${endColour}:\w $PS1"
 
+export LD_LIBRARY_PATH
 export TERM=$Term
 export HOME=$Home
 export HOSTNAME=$Hostname
