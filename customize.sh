@@ -8,6 +8,9 @@ elif [ -d /storage/emulated/0 ]; then
 fi
 ui_print "   Setting $SDCARD location."
 
+mkdir -p $SDCARD/TermuxRootMods
+ui_print "   Created /sdcard/TermuxRootMods folder."
+
 sed -i "s|<SDCARD>|$SDCARD|g" $MODPATH/system/etc/mkshrc
 
 touch $SDCARD/.customrc
@@ -24,7 +27,7 @@ if [ ! -d /data/data/com.termux/files/root-home ]; then
   mkdir /data/data/com.termux/files/root-home
   ui_print "   Created root home folder"
 else
-  ui_print "   Root home folder exist"
+  ui_print "   Root home folder exists"
 fi
 
 if [ -f $MODPATH/system/etc/servistatus ]; then
@@ -33,4 +36,12 @@ if [ -f $MODPATH/system/etc/servistatus ]; then
   ui_print "   Servistatus copied and set executable permission on com.termux/files/usr/bin"
 else
   ui_print "   Servistatus not found in /system/etc."
+fi
+
+if [ -f $MODPATH/system/etc/temps ]; then
+  cp $MODPATH/system/etc/temps /data/data/com.termux/files/usr/bin
+  chmod +x /data/data/com.termux/files/usr/bin/temps
+  ui_print "   Temps copied and set executable permission on com.termux/files/usr/bin"
+else
+  ui_print "   Temps not found in /system/etc."
 fi
