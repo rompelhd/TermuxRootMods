@@ -26,6 +26,8 @@ fi
 if [ ! -d /data/data/com.termux/files/root-home ]; then
   mkdir /data/data/com.termux/files/root-home
   ui_print "   Created root home folder"
+  touch /data/data/com.termux/files/root-home/.bash_history
+  ui_print "   Created .bash_history in root home folder"
 else
   ui_print "   Root home folder exists"
 fi
