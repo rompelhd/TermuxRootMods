@@ -8,9 +8,6 @@ elif [ -d /storage/emulated/0 ]; then
 fi
 ui_print "   Setting $SDCARD location."
 
-mkdir -p $SDCARD/TermuxRootMods
-ui_print "   Created /sdcard/TermuxRootMods folder."
-
 sed -i "s|<SDCARD>|$SDCARD|g" $MODPATH/system/etc/mkshrc
 
 touch $SDCARD/.customrc
