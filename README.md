@@ -40,3 +40,19 @@
 
   These enhancements aim to optimize the usage of Termux on rooted devices, providing users with a more feature-rich and efficient command-line environment.
 </p>
+
+</br> <h2>🚨 Disclaimer 🚨</h2>
+
+<p><strong>Use at Your Own Risk</strong></p>
+
+<p>I am not responsible for any damage caused by using this mod. This includes, but is not limited to:</p>
+
+<ul>
+  <li>Software malfunctions</li>
+  <li>Hardware brickings</li>
+  <li>Explosions</li>
+  <li>Fires</li>
+  <li>Alien invasions</li>
+</ul>
+
+<p>Always ensure you have backups of your important data and use this mod responsibly.</p>
