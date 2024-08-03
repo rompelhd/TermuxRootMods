@@ -48,11 +48,11 @@
 <p>I am not responsible for any damage caused by using this mod. This includes, but is not limited to:</p>
 
 <ul>
-  <li>Software malfunctions</li>
-  <li>Hardware brickings</li>
-  <li>Explosions</li>
-  <li>Fires</li>
-  <li>Alien invasions</li>
+  <strong><li>Software malfunctions </strong><i>(Report and I will help you)</i></li>
+  <strong><li>Hardware brickings </strong><i>(never happened)</i></li>
+  <strong><li>Explosions</li></strong>
+  <strong><li>Fires</li></strong>
+  <strong><li>Alien invasions</li></strong>
 </ul>
 
 <p>Always ensure you have backups of your important data and use this mod responsibly.</p>
