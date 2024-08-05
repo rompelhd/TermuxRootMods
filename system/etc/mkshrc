@@ -13,10 +13,15 @@ User=$(whoami)
 Hostname="android"
 Home=$HOME
 Term="xterm-256color"
-Shell="/data/data/com.termux/files/usr/bin/bash"
 AliasFile="/sdcard/.aliases"
 TempDir="/data/data/com.termux/files/usr/tmp"
 LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
+
+if [ -x "/data/data/com.termux/files/usr/bin/bash" ]; then
+    Shell="/data/data/com.termux/files/usr/bin/bash"
+else
+    Shell="/bin/sh"
+fi
 
 if [ "$TMPDIR" != "$TempDir" ]; then
   export TMPDIR="$TempDir"
