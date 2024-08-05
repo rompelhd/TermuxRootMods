@@ -1,7 +1,6 @@
 #!/system/bin/sh
 
 THERMAL_DIR="/sys/class/thermal/"
-OUTPUT_FILE="$HOME/.temps"
 
 if [ ! -d "$THERMAL_DIR" ]; then
     echo "Error: Directory Thermal not found."
@@ -11,8 +10,6 @@ fi
 if [ "$(id -u)" -ne 0 ]; then
   echo "Maybe you need root, depending on the Android device and manufacturer."
 fi
-
-> "$OUTPUT_FILE"
 
 printf "+--------------------+-------------------+\n"
 printf "| %-18s | %-18s |\n" "Type" "Temp (°C)"
@@ -29,7 +26,6 @@ for ZONE in $(ls $THERMAL_DIR | grep "thermal_zone"); do
         if (( $(echo "$TEMP > 0" | bc -l 2>/dev/null) )); then
             TYPE=$(cat "$TYPE_FILE" 2>/dev/null)
             printf "| %-18s | %-17s |\n" "$TYPE" "$TEMP_C"
-            echo "$TYPE " "$TEMP_C" >> "$OUTPUT_FILE"
         fi
     fi
 done
