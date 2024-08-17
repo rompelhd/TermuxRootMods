@@ -1,4 +1,5 @@
 # .aliases by Rompelhd 2024
+# U can add more or change anything
 
 alias la='ls -A'
 alias ll='ls -l'
@@ -6,7 +7,26 @@ alias lo='ls -al'
 alias ls='ls --color=auto'
 
 # Functions which I'm gonna count as aliases
+
 getperms(){ pm get-privapp-permissions $1 | sed "s/, /\n/g"
 }
 getdenyperms(){ pm get-privapp-deny-permissions $1 | sed "s/, /\n/g"
 }
+
+# Config
+
+greenColour="\033[1;32m"
+endColour="\033[0m"
+redColour="\033[1;31m"
+blueColour="\033[1;34m"
+yellowColour="\033[1;33m"
+purpleColour="\033[1;35m"
+turquoiseColour="\033[1;36m"
+grayColour="\033[1;37m"
+
+Hostname="android"
+
+PS1="${redColour}\u${orangeColour}🥵${yellowColour}${Hostname}${endColour}:\w $PS1"
+
+#Example 
+#PS1="\[\e[1;31m\]⚡ \u \[\e[1;33m\]@ \[\e[1;32m\]\h \[\e[1;36m\]in \[\e[1;34m\]\w \[\e[1;35m\]→ \[\e[0m\]"
