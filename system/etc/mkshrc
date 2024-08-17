@@ -6,12 +6,6 @@ AliasFile="/sdcard/.aliases"
 TempDir="/data/data/com.termux/files/usr/tmp"
 LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
 
-if [ -d "$PREFIX" ] && [ "$PREFIX" = "/data/data/com.termux/files/usr" ]; then
-    :
-else
-    exit
-fi
-
 if [ -x "/data/data/com.termux/files/usr/bin/bash" ]; then
     Shell="/data/data/com.termux/files/usr/bin/bash"
 else
