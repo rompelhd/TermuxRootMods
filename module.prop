@@ -4,3 +4,4 @@ version=v1.0.3
 versionCode=103
 author=Rompelhd
 description=Termux Root Modifications - The Way It Should Be
+updateJson=https://raw.githubusercontent.com/rompelhd/TermuxRootMods/main/update.json
