@@ -1,5 +1,5 @@
-# v1.0.5
+# v1.0.6
 
-- The code for the arm64 and armhf architectures of the temps and servistatus utilities was moved from bash to c++ which provides a much more efficient and faster execution.
+- Simple and small script that allows the deletion of the cache.
 
-- The x86_64 architecture has not been ported yet.
+- Just type from termux or a terminal emulator with root: cleaner
