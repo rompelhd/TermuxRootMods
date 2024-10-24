@@ -34,9 +34,15 @@
 
   - Root Shell Replacement: It replaces the default shell with bash, providing additional functionalities like the ability to clear the screen with Ctrl + L. This allows for a more convenient and familiar shell environment for users.
 
-  - Aliases Configuration: It adds a file named .aliases to the /sdcard/ directory. This file contains user-defined aliases that can streamline common commands and improve productivity within the Termux environment.
+  - PS1 Customization: Users can edit the `PS1` prompt in the `.aliases` file located in the `/sdcard/` directory, allowing for a personalized command-line interface tailored to their preferences.
 
-  - Service Monitoring Script: Additionally, TermuxRootMods includes a bash script that enables users to monitor running services. This script provides insights into the currently active services, offering users better control and visibility over system processes.
+  - Aliases Configuration: It adds a file named `.aliases` to the `/sdcard/` directory. This file contains user-defined aliases that can streamline common commands and improve productivity within the Termux environment.
+
+  - Service Monitoring Script: Additionally, TermuxRootMods includes a binary called `servistatus` that enables users to monitor running services. This script provides insights into the currently active services, offering users better control and visibility over system processes.
+    
+  - Temperature Monitoring Script: The module also features a binary called `temps`, which allows users to view the temperature of various sensors, including CPU, RAM, and other components. This feature helps users keep track of system performance and manage thermal conditions effectively.
+
+  - Cache Cleaner Script: Furthermore, the module includes a `cleaner` script designed to clear the cache of various Android system applications. This script automates the process of deleting cache files, freeing up storage space and improving overall device performance.
 
   These enhancements aim to optimize the usage of Termux on rooted devices, providing users with a more feature-rich and efficient command-line environment.
 </p>
