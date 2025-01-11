@@ -1,4 +1,4 @@
-# v1.0.7
+# v1.0.7 Termux Root Modifications - The Way It Should Be By Rompelhd 🥵
 
 - Added an FSU (Fake SU) feature that enables running binaries as root or obtaining a root shell without requiring root privileges. This is achieved using `proot`, providing a secure and flexible solution for simulating root access.
 
