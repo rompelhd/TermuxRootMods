@@ -1,5 +1,11 @@
-# v1.0.6
+# v1.0.7
 
-- Simple and small script that allows the deletion of the cache.
+- Added an FSU (Fake SU) feature that enables running binaries as root or obtaining a root shell without requiring root privileges. This is achieved using `proot`, providing a secure and flexible solution for simulating root access.
 
-- Just type from termux or a terminal emulator with root: cleaner
+### Usage Examples:
+
+- `fsu fastfetch`  
+  Runs the `fastfetch` command with root privileges without needing to be root.
+
+- `fsu`  
+  Starts a root shell, allowing you to execute commands as if you were the root user without direct root access.
