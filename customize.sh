@@ -29,18 +29,55 @@ else
   ui_print "   Root home folder exists"
 fi
 
-if [ -f $MODPATH/system/etc/servistatus ]; then
-  cp $MODPATH/system/etc/servistatus /data/data/com.termux/files/usr/bin
+ARCH=$(uname -m)
+ui_print "   Detected architecture: $ARCH"
+
+case $ARCH in
+  aarch64)
+    ARCH_DIR="arm64"
+    ;;
+  armv7l | armv8l)
+    ARCH_DIR="armhf"
+    ;;
+  x86_64)
+    ARCH_DIR="x86_64"
+    ;;
+  *)
+    ui_print "   Unsupported architecture: $ARCH"
+    exit 1
+    ;;
+esac
+
+if [ -f $MODPATH/system/etc/arch/$ARCH_DIR/servistatus ]; then
+  cp $MODPATH/system/etc/arch/$ARCH_DIR/servistatus /data/data/com.termux/files/usr/bin
   chmod +x /data/data/com.termux/files/usr/bin/servistatus
-  ui_print "   Servistatus copied and set executable permission on com.termux/files/usr/bin"
+  ui_print "   Servistatus copied and set executable permission on /data/data/com.termux/files/usr/bin"
 else
-  ui_print "   Servistatus not found in /system/etc."
+  ui_print "   Servistatus not found in $MODPATH/$ARCH_DIR/"
 fi
 
-if [ -f $MODPATH/system/etc/temps ]; then
-  cp $MODPATH/system/etc/temps /data/data/com.termux/files/usr/bin
+if [ -f $MODPATH/system/etc/arch/$ARCH_DIR/temps ]; then
+  cp $MODPATH/system/etc/arch/$ARCH_DIR/temps /data/data/com.termux/files/usr/bin
   chmod +x /data/data/com.termux/files/usr/bin/temps
-  ui_print "   Temps copied and set executable permission on com.termux/files/usr/bin"
+  ui_print "   Temps copied and set executable permission on /data/data/com.termux/files/usr/bin"
 else
-  ui_print "   Temps not found in /system/etc."
+  ui_print "   Temps not found in $MODPATH/$ARCH_DIR/"
 fi
+
+if [ -f $MODPATH/system/etc/arch/$ARCH_DIR/cleaner  ]; then
+  cp $MODPATH/system/etc/arch/$ARCH_DIR/cleaner /data/data/com.termux/files/usr/bin
+  chmod +x /data/data/com.termux/files/usr/bin/cleaner
+  ui_print "   Cleaner copied and set executable permission on /data/data/com.termux/files/usr/bin"
+else
+  ui_print "   Cleaner not found in $MODPATH/$ARCH_DIR/"
+fi
+
+if [ -f $MODPATH/system/etc/arch/$ARCH_DIR/fsu  ]; then
+  cp $MODPATH/system/etc/arch/$ARCH_DIR/fsu /data/data/com.termux/files/usr/bin
+  chmod +x /data/data/com.termux/files/usr/bin/fsu
+  ui_print "   Fsu copied and set executable permission on /data/data/com.termux/files/usr/bin"
+else
+  ui_print "   Fsu not found in $MODPATH/$ARCH_DIR/"
+fi
+
+fsu
