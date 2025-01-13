@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v proot &>/dev/null; then
+    echo "proot is not installed. Exiting script. [❌]"
+    exit 1
+fi
+
 root_home_dir="/data/data/com.termux/files/root-home"
 default_home_dir="/"
 
