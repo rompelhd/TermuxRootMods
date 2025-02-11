@@ -5,10 +5,33 @@ Term="xterm-256color"
 AliasFile="/sdcard/.aliases"
 TempDir="/data/data/com.termux/files/usr/tmp"
 LD_LIBRARY_PATH="/data/data/com.termux/files/usr/lib"
+trm_config="/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm"
 
-if [ -x "/data/data/com.termux/files/usr/bin/bash" ]; then
-    Shell="/data/data/com.termux/files/usr/bin/bash"
+if [ -f "$trm_config" ]; then
+    eval "$(
+        awk -v FS='=' '
+            BEGIN { section="" }
+            /^\[/ { section=tolower($0); gsub(/[\[\]]/, "", section); next }
+            /^[^;#]/ {
+                key=$1; value=$2;
+                gsub(/^[ \t]+|[ \t]+$/, "", key);
+                gsub(/^[ \t]+|[ \t]+$/, "", value);
+                print "export " toupper(section) "_" toupper(key) "=\"" value "\""
+            }
+        ' "$trm_config"
+    )"
+fi
+
+echo "SHELL: $SHELL_SHELL"
+echo "LANGUAGE: $GENERAL_LANGUAGE"
+
+shell_name="$(basename "$Shell")"
+
+if [ -n "$SHELL_SHELL" ] && [ -x "$SHELL_SHELL" ]; then
+    Shell="$SHELL_SHELL"
 else
+    echo "Error: The '$SHELL_SHELL' is not found."
+    echo "Trying with sh"
     Shell="/bin/sh"
 fi
 
@@ -46,6 +69,21 @@ if [ -z "$PS1" ]; then
     PS1="\u@\h:\w $PS1"
 fi
 
-exec "$Shell" --rcfile "$temp_bashrc"
+if [ -n "$temp_bashrc" ] && [ -f "$temp_bashrc" ]; then
+    case "$shell_name" in
+        bash)
+            exec "$Shell" --rcfile "$temp_bashrc"
+            ;;
+        zsh)
+            export ZDOTDIR="$(dirname "$temp_bashrc")"
+            exec "$Shell"
+            ;;
+        *)
+            exec "$Shell"
+            ;;
+    esac
+else
+    exec "$Shell"
+fi
 
 trap "rm -f $temp_bashrc" EXIT
