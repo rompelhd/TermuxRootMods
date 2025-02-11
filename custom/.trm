@@ -1,0 +1,10 @@
+; Config of TermuxRootMods
+[SHELL]
+shell=/data/data/com.termux/files/usr/bin/zsh
+; zsh or bash
+
+[THEME]
+theme_name=none
+
+[GENERAL]
+language=es
