@@ -1,11 +1,5 @@
-# v1.0.7 Termux Root Mods - The Way It Should Be, By Rompelhd 🥵
+# v1.0.8 Termux Root Mods - The Way It Should Be, By Rompelhd 🥵
 
-- Added an FSU (Fake SU) feature that enables running binaries as root or obtaining a root shell without requiring root privileges. This is achieved using `proot`, providing a secure and flexible solution for simulating root access.
+The scripts for x86_64 architecture were previously stored in a separate directory under system/etc/arch/x86_64. However, since the code for x86_64, ARM, and ARM64 has been unified into the same C++ source code (compiled for the respective architectures), the need for a dedicated directory for x86_64 architecture has become redundant. All the scripts (like temps and servistatus) are now compiled for multiple architectures, making the separate storage directory unnecessary.
 
-### Usage Examples:
-
-- `fsu fastfetch`  
-  Runs the `fastfetch` command with root privileges without needing to be root.
-
-- `fsu`  
-  Starts a root shell, allowing you to execute commands as if you were the root user without direct root access.
+Therefore, the system/etc/arch/x86_64 directory is being deleted to streamline the system and remove obsolete structure.
