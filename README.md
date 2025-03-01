@@ -11,7 +11,7 @@
       <img src="https://img.shields.io/badge/Build-Passing-green" alt="Build Passing">
     </td>
     <td align="center">
-      <img src="https://img.shields.io/badge/Version-v1.0.7-blue" alt="Version">
+      <img src="https://img.shields.io/badge/Version-v1.0.8-blue" alt="Version">
     </td>
   </tr>
   <tr>
