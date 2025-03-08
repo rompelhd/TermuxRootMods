@@ -13,6 +13,8 @@ int main() {
     std::string trm_config = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
 
     std::ifstream configFile(trm_config);
+    std::string theme_name = "none";
+
     if (configFile) {
         std::string line, current_section;
         while (std::getline(configFile, line)) {
@@ -43,10 +45,11 @@ int main() {
                     env_var = "GENERAL_LANGUAGE";
                 } else if (current_section == "THEME" && key == "theme_name") {
                     env_var = "THEME_NAME";
+                    theme_name = value;
                 }
 
                 if (!env_var.empty()) {
-                    std::cout << "Seteando: " << env_var << "=" << value << std::endl;
+                    //std::cout << "Setting: " << env_var << "=" << value << std::endl;
                     setenv(env_var.c_str(), value.c_str(), 1);
                 }
             }
@@ -74,6 +77,15 @@ int main() {
     setenv("SHELL", Shell.c_str(), 1);
     setenv("PATH", (std::string(std::getenv("PATH")) + ":/data/data/com.termux/files/usr/bin").c_str(), 1);
 
+    std::string PS1;
+    if (theme_name == "minimalist") {
+        PS1 = "\\[\\e[1;31m\\]⚡\\u \\[\\e[1;33m\\]@ \\[\\e[1;32m\\]\\h \\[\\e[1;36m\\]in \\[\\e[1;34m\\]\\w \\[\\e[1;35m\\]→ \\[\\e[0m\\]";
+    } else if (theme_name == "colorful") {
+        PS1 = "\033[1;32m\\u@\\h\033[0m:\033[1;34m\\w\033[0m$ ";
+    } else if (theme_name == "default") {
+        PS1 = "\\[\\e[0;32m\\]\\w\\[\\e[0m\\] \\[\\e[0;97m\\]#\\[\\e[0m\\] ";
+    }
+
     std::string temp_bashrc = TempDir + "/bashrc." + std::to_string(getpid());
     std::ofstream bashrcFile(temp_bashrc);
     if (bashrcFile) {
@@ -81,6 +93,9 @@ int main() {
         bashrcFile << "export HOME='" << Home << "'\n";
         bashrcFile << "export SHELL='" << Shell << "'\n";
         bashrcFile << "export PATH='" << std::getenv("PATH") << "'\n";
+        if (!PS1.empty()) {
+            bashrcFile << "export PS1=\"" << PS1 << "\"\n";
+        }
         if (std::ifstream(AliasFile)) {
             bashrcFile << "if [ -f '" << AliasFile << "' ]; then . '" << AliasFile << "'; fi\n";
         }
