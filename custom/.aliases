@@ -25,11 +25,3 @@ turquoiseColour="\033[1;36m"
 grayColour="\033[1;37m"
 
 Hostname="android"
-
-#PS1="${redColour}\u${orangeColour}🥵${yellowColour}${Hostname}${endColour}:\w $PS1"
-
-#Example 
-#PS1="\[\e[1;31m\]⚡ \u \[\e[1;33m\]@ \[\e[1;32m\]\h \[\e[1;36m\]in \[\e[1;34m\]\w \[\e[1;35m\]→ \[\e[0m\]"
-
-#Termux
-PS1="\[\e[1;32m\]\w \[\e[1;37m\]# \[\e[0m\]"
