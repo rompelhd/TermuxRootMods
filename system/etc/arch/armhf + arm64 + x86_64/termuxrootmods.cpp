@@ -3,6 +3,9 @@
 #include <curl/curl.h>
 #include <cstdlib>
 #include <fstream>
+#include <vector>
+
+const std::string configPath = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
 
 const std::string banner = R"(
 ▗▄▄▄▖▗▄▄▄▖▗▄▄▖ ▗▖  ▗▖▗▖ ▗▖▗▖  ▗▖▗▄▄▖  ▗▄▖  ▗▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▖ ▗▄▄▄  ▗▄▄▖
@@ -11,11 +14,18 @@ const std::string banner = R"(
   █  ▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▞▘▝▚▖▐▌ ▐▌▝▚▄▞▘▝▚▄▞▘ █  ▐▌  ▐▌▝▚▄▞▘▐▙▄▄▀▗▄▄▞▘
 )";
 const std::string URL = "https://raw.githubusercontent.com/rompelhd/TermuxRootMods/refs/heads/main/update.json";
-const std::string Iversion = "v1.0.6";
+const std::string Iversion = "v1.0.8";
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
+}
+
+void ckroot() {
+    if (geteuid() != 0) {
+        std::cerr << "You must run this program as root." << std::endl;
+        exit(EXIT_FAILURE);
+    }
 }
 
 std::string fetchRemoteVersion() {
@@ -67,6 +77,44 @@ void checkVersion() {
 std::string shell;
 std::string theme_name;
 std::string language;
+
+void UpdateConfigVariable(const std::string& variable, const std::string& newValue) {
+    std::ifstream fileIn(configPath);
+    if (!fileIn) {
+        std::cerr << "❌ Error: No se pudo abrir el archivo de configuración.\n";
+        return;
+    }
+
+    std::vector<std::string> lines;
+    std::string line;
+    bool variableUpdated = false;
+
+    while (std::getline(fileIn, line)) {
+        if (line.find(variable + " =") == 0) {
+            line = variable + " = " + newValue;
+            variableUpdated = true;
+        }
+        lines.push_back(line);
+    }
+    fileIn.close();
+
+    if (!variableUpdated) {
+        lines.push_back(variable + " = " + newValue);
+    }
+
+    std::ofstream fileOut(configPath);
+    if (!fileOut) {
+        std::cerr << "❌ Error: No se pudo escribir en el archivo de configuración.\n";
+        return;
+    }
+
+    for (const std::string& updatedLine : lines) {
+        fileOut << updatedLine << "\n";
+    }
+
+    fileOut.close();
+    std::cout << "✅ " << variable << " cambiado a: " << newValue << "\n";
+}
 
 void loadConfiguration(const std::string& configPath) {
     std::ifstream configFile(configPath);
@@ -135,20 +183,20 @@ void ChangeTheme() {
                 std::cout << "Choose a theme:\n";
                 std::cout << "1) Termux Default theme -> \033[1;32m/root/ \033[1;37m# \033[0m\n";
                 std::cout << "2) Colorful theme -> \033[1;32mroot@android\033[0m:\033[1;34m/root/\033[0m#\n";
-                std::cout << "3) Minimalist theme -> \033[1;31m⚡ \033[1;31mroot \033[1;33m@ \033[1;32mandroid \033[1;36min \033[1;34m/root/ \033[1;35m→ \033[0m\n";
+                std::cout << "3) Minimalist theme -> \033[1;31m⚡\033[1;31mroot \033[1;33m@ \033[1;32mandroid \033[1;36min \033[1;34m/root/ \033[1;35m→ \033[0m\n";
                 std::cout << "\nSelect an option: ";
                 int themeOption;
                 std::cin >> themeOption;
 
                 switch (themeOption) {
                     case 1:
-                        std::cout << "Bash theme changed to Termux Default.\n";
+                        UpdateConfigVariable("theme_name", "default");
                         break;
                     case 2:
-                        std::cout << "Bash theme changed to Colorful.\n";
+                        UpdateConfigVariable("theme_name", "colorful");
                         break;
                     case 3:
-                        std::cout << "Bash theme changed to Minimalist.\n";
+                        UpdateConfigVariable("theme_name", "minimalist");
                         break;
                     default:
                         std::cout << "Invalid option.\n";
@@ -240,6 +288,7 @@ void pauseProgram() {
 }
 
 int main() {
+    ckroot();
     while (true) {
         std::string configPath = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
         loadConfiguration(configPath);
