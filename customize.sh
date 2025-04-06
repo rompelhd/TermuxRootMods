@@ -3,9 +3,7 @@
 BIN=$( [ -d /system/xbin ] && echo "/system/xbin" || echo "/system/bin" )
 SDCARD=$( [ -d /sdcard ] && echo "/sdcard" || echo "/storage/emulated/0" )
 ROOT_HOME="/data/data/com.termux/files/root-home"
-
-ui_print "   Setting SDCARD location: $SDCARD"
-sed -i "s|<SDCARD>|$SDCARD|g" "$MODPATH/system/etc/mkshrc"
+Temuxrootmods="$ROOT_HOME/.config/TermuxRootMods/"
 
 touch "$SDCARD/.customrc"
 
@@ -19,6 +17,12 @@ if [ ! -d "$ROOT_HOME" ]; then
     mkdir -p "$ROOT_HOME"
     touch "$ROOT_HOME/.bash_history"
     ui_print "   Created root home folder and .bash_history"
+fi
+
+if [ ! -d "$Temuxrootmods" ]; then
+    mkdir -p "$Temuxrootmods"
+    cp "$MODPATH/custom/.trm" "$Temuxrootmods"
+    ui_print "   Created TermuxRootMods Config on /root-home/.config/TermuxRootMods/"
 fi
 
 ARCH=$(uname -m)
@@ -44,3 +48,11 @@ copy_file_if_exists() {
 for file in servistatus temps cleaner fsu; do
     copy_file_if_exists "$file"
 done
+
+cp -f "$MODPATH/system/etc/mkshrc" "$MODPATH/system/etc/mkshrc"
+chmod 777 "$MODPATH/system/etc/mkshrc"
+
+cp -f "$MODPATH/system/etc/arch/$ARCH_DIR/shell" "$MODPATH/system/etc/shell"
+chmod 777 "$MODPATH/system/etc/shell"
+
+ui_print "   mkshrc copied to Magisk overlay"
