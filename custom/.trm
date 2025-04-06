@@ -1,6 +1,6 @@
 ; Config of TermuxRootMods
 [SHELL]
-shell=/data/data/com.termux/files/usr/bin/zsh
+shell=bash
 ; zsh or bash
 
 [THEME]
