@@ -10,11 +10,10 @@ int main() {
     std::string AliasFile = "/sdcard/.aliases";
     std::string TempDir = "/data/data/com.termux/files/usr/tmp";
     std::string LD_LIBRARY_PATH = "/data/data/com.termux/files/usr/lib";
-    std::string trm_config = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
-
-    std::ifstream configFile(trm_config);
+    std::string trm_config = Home + "/.config/TermuxRootMods/.trm";
     std::string theme_name = "none";
 
+    std::ifstream configFile(trm_config);
     if (configFile) {
         std::string line, current_section;
         while (std::getline(configFile, line)) {
@@ -49,14 +48,14 @@ int main() {
                 }
 
                 if (!env_var.empty()) {
-                    //std::cout << "Setting: " << env_var << "=" << value << std::endl;
                     setenv(env_var.c_str(), value.c_str(), 1);
                 }
             }
         }
     }
 
-    std::string Shell = std::getenv("SHELL") ? std::getenv("SHELL") : "/bin/sh";
+    const char* shell_env = std::getenv("SHELL");
+    std::string Shell = shell_env ? shell_env : "/bin/sh";
 
     if (Shell == "zsh" || Shell == "bash" || Shell == "sh") {
         Shell = "/data/data/com.termux/files/usr/bin/" + Shell;
@@ -67,15 +66,19 @@ int main() {
         Shell = "/bin/sh";
     }
 
-    if (std::getenv("TMPDIR") != TempDir) {
-        setenv("TMPDIR", TempDir.c_str(), 1);
-    }
-
+    setenv("TMPDIR", TempDir.c_str(), 1);
     setenv("LD_LIBRARY_PATH", LD_LIBRARY_PATH.c_str(), 1);
     setenv("TERM", Term.c_str(), 1);
     setenv("HOME", Home.c_str(), 1);
     setenv("SHELL", Shell.c_str(), 1);
-    setenv("PATH", (std::string(std::getenv("PATH")) + ":/data/data/com.termux/files/usr/bin").c_str(), 1);
+
+    const char* path_env = std::getenv("PATH");
+    std::string DefaultPath = "/data/data/com.termux/files/usr/bin:/system/bin:/bin:/usr/bin";
+    std::string FullPath = path_env ? std::string(path_env) : DefaultPath;
+    if (FullPath.find("/data/data/com.termux/files/usr/bin") == std::string::npos) {
+        FullPath += ":/data/data/com.termux/files/usr/bin";
+    }
+    setenv("PATH", FullPath.c_str(), 1);
 
     std::string PS1;
     if (theme_name == "minimalist") {
@@ -92,7 +95,9 @@ int main() {
         bashrcFile << "export TERM='" << Term << "'\n";
         bashrcFile << "export HOME='" << Home << "'\n";
         bashrcFile << "export SHELL='" << Shell << "'\n";
-        bashrcFile << "export PATH='" << std::getenv("PATH") << "'\n";
+        bashrcFile << "export PATH='" << FullPath << "'\n";
+        bashrcFile << "export TMPDIR='" << TempDir << "'\n";
+        bashrcFile << "export LD_LIBRARY_PATH='" << LD_LIBRARY_PATH << "'\n";
         if (!PS1.empty()) {
             bashrcFile << "export PS1=\"" << PS1 << "\"\n";
         }
