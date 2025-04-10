@@ -14,7 +14,7 @@ const std::string banner = R"(
   █  ▐▙▄▄▖▐▌ ▐▌▐▌  ▐▌▝▚▄▞▘▗▞▘▝▚▖▐▌ ▐▌▝▚▄▞▘▝▚▄▞▘ █  ▐▌  ▐▌▝▚▄▞▘▐▙▄▄▀▗▄▄▞▘
 )";
 const std::string URL = "https://raw.githubusercontent.com/rompelhd/TermuxRootMods/refs/heads/main/update.json";
-const std::string Iversion = "v1.0.8";
+const std::string Iversion = "v1.0.10";
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -81,7 +81,7 @@ std::string language;
 void UpdateConfigVariable(const std::string& variable, const std::string& newValue) {
     std::ifstream fileIn(configPath);
     if (!fileIn) {
-        std::cerr << "❌ Error: No se pudo abrir el archivo de configuración.\n";
+        std::cerr << "❌ Error: The configuration file could not be opened\n";
         return;
     }
 
@@ -104,7 +104,7 @@ void UpdateConfigVariable(const std::string& variable, const std::string& newVal
 
     std::ofstream fileOut(configPath);
     if (!fileOut) {
-        std::cerr << "❌ Error: No se pudo escribir en el archivo de configuración.\n";
+        std::cerr << "❌ Error: Could not write to the configuration file.\n";
         return;
     }
 
@@ -113,7 +113,7 @@ void UpdateConfigVariable(const std::string& variable, const std::string& newVal
     }
 
     fileOut.close();
-    std::cout << "✅ " << variable << " cambiado a: " << newValue << "\n";
+    std::cout << "✅ " << variable << " changed to: " << newValue << "\n";
 }
 
 void loadConfiguration(const std::string& configPath) {
