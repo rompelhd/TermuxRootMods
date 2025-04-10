@@ -1,7 +1,7 @@
 id=TermuxRootMods
 name=Termux Root Modifications
-version=v1.0.8
-versionCode=108
+version=v1.0.10
+versionCode=110
 author=Rompelhd
 description=Termux Root Modifications - The Way It Should Be
 updateJson=https://raw.githubusercontent.com/rompelhd/TermuxRootMods/main/update.json
