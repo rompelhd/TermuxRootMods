@@ -1,48 +1,239 @@
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
 #include <string>
+#include <sstream>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/time.h>
 #include <openssl/sha.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
 
-std::string sha256(const std::string& input) {
+#define AES_IV_LENGTH 16
+
+const unsigned char AES_ENCRYPTION_KEY[] = {
+    0x1a, 0x2b, 0x3c, 0x4d, 0x5e, 0x6f, 0x7a, 0x8b,
+    0x9c, 0xad, 0xbe, 0xcf, 0xd0, 0xe1, 0xf2, 0x03,
+    0x14, 0x25, 0x36, 0x47, 0x58, 0x69, 0x7a, 0x8b,
+    0x9c, 0xad, 0xbe, 0xcf, 0xd0, 0xe1, 0xf2, 0x03
+};
+
+std::string sha256_with_salt(const std::string& input, const std::string& salt) {
+    std::string salted_input = input + salt;
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256((unsigned char*)input.c_str(), input.size(), hash);
+    SHA256((unsigned char*)salted_input.c_str(), salted_input.size(), hash);
 
     char output[2 * SHA256_DIGEST_LENGTH + 1];
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {
         sprintf(output + (i * 2), "%02x", hash[i]);
+    }
     output[64] = 0;
-
     return std::string(output);
 }
 
-bool ver_con() {
-    std::string hash_file = "/data/data/com.termux/files/usr/etc/.trm_passwd_hash";
-    std::ifstream file(hash_file);
-    if (!file) {
-        std::cerr << "No se pudo abrir el archivo de hash: " << hash_file << std::endl;
+bool encrypt_timestamp(long timestamp, const std::string& filename) {
+    unsigned char iv[AES_IV_LENGTH];
+    if (RAND_bytes(iv, AES_IV_LENGTH) != 1) {
+        std::cerr << "Error: Failed to generate IV." << std::endl;
         return false;
     }
 
+    std::string timestamp_str = std::to_string(timestamp);
+    unsigned char ciphertext[256];
+    int ciphertext_len = 0;
+    int len;
+
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) {
+        std::cerr << "Error: Failed to create EVP context." << std::endl;
+        return false;
+    }
+
+    if (EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_ENCRYPTION_KEY, iv) != 1) {
+        std::cerr << "Error: Failed to initialize encryption." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+
+    if (EVP_EncryptUpdate(ctx, ciphertext, &len, (unsigned char*)timestamp_str.c_str(), timestamp_str.size()) != 1) {
+        std::cerr << "Error: Failed to encrypt data." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+    ciphertext_len += len;
+
+    if (EVP_EncryptFinal_ex(ctx, ciphertext + len, &len) != 1) {
+        std::cerr << "Error: Failed to finalize encryption." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+    ciphertext_len += len;
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    std::ofstream out(filename, std::ios::binary);
+    if (!out) {
+        std::cerr << "Warning: Unable to create timestamp file." << std::endl;
+        return false;
+    }
+    out.write((char*)iv, AES_IV_LENGTH);
+    out.write((char*)ciphertext, ciphertext_len);
+    out.close();
+
+    chmod(filename.c_str(), 0600);
+    return true;
+}
+
+bool decrypt_timestamp(const std::string& filename, long& timestamp) {
+    std::ifstream in(filename, std::ios::binary);
+    if (!in) {
+        return false;
+    }
+
+    unsigned char iv[AES_IV_LENGTH];
+    unsigned char ciphertext[256];
+    unsigned char plaintext[256];
+    int ciphertext_len = 0;
+    int plaintext_len = 0;
+    int len;
+
+    in.read((char*)iv, AES_IV_LENGTH);
+    ciphertext_len = in.read((char*)ciphertext, sizeof(ciphertext)).gcount();
+    in.close();
+
+    if (ciphertext_len <= 0) {
+        return false;
+    }
+
+    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
+    if (!ctx) {
+        std::cerr << "Error: Failed to create EVP context." << std::endl;
+        return false;
+    }
+
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), nullptr, AES_ENCRYPTION_KEY, iv) != 1) {
+        std::cerr << "Error: Failed to initialize decryption." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+
+    if (EVP_DecryptUpdate(ctx, plaintext, &len, ciphertext, ciphertext_len) != 1) {
+        std::cerr << "Error: Failed to decrypt data." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+    plaintext_len += len;
+
+    if (EVP_DecryptFinal_ex(ctx, plaintext + len, &len) != 1) {
+        std::cerr << "Error: Failed to finalize decryption." << std::endl;
+        EVP_CIPHER_CTX_free(ctx);
+        return false;
+    }
+    plaintext_len += len;
+
+    EVP_CIPHER_CTX_free(ctx);
+
+    std::string plaintext_str((char*)plaintext, plaintext_len);
+    try {
+        timestamp = std::stol(plaintext_str);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+bool ver_con() {
+    std::string shadow_file = "/data/data/com.termux/files/usr/etc/.trm_shadow";
+    std::string timestamp_file = "/data/data/com.termux/files/usr/tmp/.trm_sudo_timestamp";
+    std::string username = "termux";
+    std::string salt = "trm_salt_2025";
+    const long TIMEOUT_SECONDS = 300; // 5m
+
+    struct stat file_stat;
+    long timestamp;
+    if (stat(timestamp_file.c_str(), &file_stat) == 0 && decrypt_timestamp(timestamp_file, timestamp)) {
+        struct timeval current_time;
+        gettimeofday(&current_time, nullptr);
+        long current_seconds = current_time.tv_sec;
+
+        if ((file_stat.st_mode & 0777) != 0600) {
+            chmod(timestamp_file.c_str(), 0600);
+        }
+
+        if (current_seconds - timestamp < TIMEOUT_SECONDS) {
+            return true;
+        }
+    }
+
+    if (stat(shadow_file.c_str(), &file_stat) == 0) {
+        if ((file_stat.st_mode & 0777) != 0600) {
+            chmod(shadow_file.c_str(), 0600);
+        }
+    }
+
+    std::ifstream file(shadow_file);
+    if (!file) {
+        std::cerr << "Error: Unable to open shadow file." << std::endl;
+        return false;
+    }
+
+    std::string line;
     std::string hash_guardado;
-    std::getline(file, hash_guardado);
+    bool found = false;
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string user, hash_field;
+        std::getline(iss, user, ':');
+        std::getline(iss, hash_field, ':');
+        if (user == username) {
+            size_t pos1 = hash_field.find('$');
+            size_t pos2 = hash_field.find('$', pos1 + 1);
+            size_t pos3 = hash_field.find('$', pos2 + 1);
+            if (pos1 != std::string::npos && pos2 != std::string::npos && pos3 != std::string::npos) {
+                std::string id = hash_field.substr(pos1 + 1, pos2 - pos1 - 1);
+                std::string file_salt = hash_field.substr(pos2 + 1, pos3 - pos2 - 1);
+                hash_guardado = hash_field.substr(pos3 + 1);
+                if (id == "5" && file_salt == salt) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+    }
     file.close();
 
-    std::string input;
-    std::cout << "Ingrese la contraseña: ";
-    std::cin >> input;
+    if (!found) {
+        std::cerr << "Error: User or hash not found in shadow file." << std::endl;
+        return false;
+    }
 
-    std::string hash_input = sha256(input);
-    return hash_input == hash_guardado;
+    char* input = getpass("Enter password: ");
+    if (!input) {
+        std::cerr << "Error: Unable to read password." << std::endl;
+        return false;
+    }
+
+    std::string hash_input = sha256_with_salt(input, salt);
+    memset(input, 0, strlen(input));
+
+    if (hash_input != hash_guardado) {
+        std::cerr << "Access denied." << std::endl;
+        return false;
+    }
+
+    struct timeval current_time;
+    gettimeofday(&current_time, nullptr);
+    if (!encrypt_timestamp(current_time.tv_sec, timestamp_file)) {
+        std::cerr << "Warning: Unable to create encrypted timestamp file." << std::endl;
+    }
+
+    return true;
 }
 
 int main() {
     if (!ver_con()) {
-        std::cerr << "Contraseña incorrecta. Acceso denegado." << std::endl;
         return 1;
     }
-
 
     std::string Home = "/data/data/com.termux/files/root-home";
     std::string Term = "xterm-256color";
@@ -87,6 +278,7 @@ int main() {
                 }
             }
         }
+        configFile.close();
     }
 
     const char* shell_env = std::getenv("SHELL");
@@ -95,7 +287,7 @@ int main() {
         Shell = "/data/data/com.termux/files/usr/bin/" + Shell;
     }
     if (access(Shell.c_str(), X_OK) != 0) {
-        std::cerr << "Error: El shell '" << Shell << "' no se encontró. Usando /bin/sh." << std::endl;
+        std::cerr << "Error: Shell not found. Falling back to /bin/sh." << std::endl;
         Shell = "/bin/sh";
     }
 
@@ -138,6 +330,7 @@ int main() {
             bashrcFile << "if [ -f '" << AliasFile << "' ]; then . '" << AliasFile << "'; fi\n";
         }
         bashrcFile.close();
+        chmod(temp_bashrc.c_str(), 0600);
     }
 
     if (!temp_bashrc.empty() && std::ifstream(temp_bashrc)) {
