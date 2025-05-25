@@ -3,8 +3,47 @@
 #include <cstdlib>
 #include <string>
 #include <unistd.h>
+#include <openssl/sha.h>
+
+std::string sha256(const std::string& input) {
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256((unsigned char*)input.c_str(), input.size(), hash);
+
+    char output[2 * SHA256_DIGEST_LENGTH + 1];
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
+        sprintf(output + (i * 2), "%02x", hash[i]);
+    output[64] = 0;
+
+    return std::string(output);
+}
+
+bool ver_con() {
+    std::string hash_file = "/data/data/com.termux/files/usr/etc/.trm_passwd_hash";
+    std::ifstream file(hash_file);
+    if (!file) {
+        std::cerr << "No se pudo abrir el archivo de hash: " << hash_file << std::endl;
+        return false;
+    }
+
+    std::string hash_guardado;
+    std::getline(file, hash_guardado);
+    file.close();
+
+    std::string input;
+    std::cout << "Ingrese la contraseña: ";
+    std::cin >> input;
+
+    std::string hash_input = sha256(input);
+    return hash_input == hash_guardado;
+}
 
 int main() {
+    if (!ver_con()) {
+        std::cerr << "Contraseña incorrecta. Acceso denegado." << std::endl;
+        return 1;
+    }
+
+
     std::string Home = "/data/data/com.termux/files/root-home";
     std::string Term = "xterm-256color";
     std::string AliasFile = "/sdcard/.aliases";
@@ -19,19 +58,15 @@ int main() {
         while (std::getline(configFile, line)) {
             line.erase(0, line.find_first_not_of(" \t\r\n"));
             line.erase(line.find_last_not_of(" \t\r\n") + 1);
-
             if (line.empty() || line[0] == ';' || line[0] == '#') continue;
-
             if (line.front() == '[' && line.back() == ']') {
                 current_section = line.substr(1, line.size() - 2);
                 continue;
             }
-
             size_t pos = line.find('=');
             if (pos != std::string::npos) {
                 std::string key = line.substr(0, pos);
                 std::string value = line.substr(pos + 1);
-
                 key.erase(0, key.find_first_not_of(" \t"));
                 key.erase(key.find_last_not_of(" \t") + 1);
                 value.erase(0, value.find_first_not_of(" \t"));
@@ -56,11 +91,9 @@ int main() {
 
     const char* shell_env = std::getenv("SHELL");
     std::string Shell = shell_env ? shell_env : "/bin/sh";
-
     if (Shell == "zsh" || Shell == "bash" || Shell == "sh") {
         Shell = "/data/data/com.termux/files/usr/bin/" + Shell;
     }
-
     if (access(Shell.c_str(), X_OK) != 0) {
         std::cerr << "Error: El shell '" << Shell << "' no se encontró. Usando /bin/sh." << std::endl;
         Shell = "/bin/sh";
@@ -122,6 +155,5 @@ int main() {
     }
 
     remove(temp_bashrc.c_str());
-
     return 0;
 }
