@@ -39,8 +39,8 @@ void print_table() {
 
             float temp = read_temperature(temp_file);
             if (temp >= 0) {
-                std::cout << "| " << std::setw(18) << type << " | " 
-                          << std::setw(17) << std::fixed << std::setprecision(1) << temp 
+                std::cout << "| " << std::left << std::setw(18) << type << " | "
+                          << std::left << std::setw(17) << std::fixed << std::setprecision(1) << temp
                           << " |" << std::endl;
             }
         }
