@@ -45,7 +45,7 @@ copy_file_if_exists() {
     fi
 }
 
-for file in servistatus temps cleaner fsu; do
+for file in servistatus temps cleaner fsu sudo; do
     copy_file_if_exists "$file"
 done
 
