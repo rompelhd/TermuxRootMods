@@ -15,6 +15,7 @@ char *find_su() {
         "/sbin/su",
         "/su/bin/su",
         "/sbin/.magisk/busybox",
+        "/debug_ramdisk/su",
         NULL
     };
 
