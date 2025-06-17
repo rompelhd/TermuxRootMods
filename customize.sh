@@ -7,16 +7,26 @@ Temuxrootmods="$ROOT_HOME/.config/TermuxRootMods/"
 
 touch "$SDCARD/.customrc"
 
-if [ -f "$SDCARD/.aliases" ]; then
-    ui_print "   $SDCARD/.aliases found! Backing up and overwriting!"
-    mv "$SDCARD/.aliases" "$SDCARD/.aliases.bak"
-fi
-cp "$MODPATH/custom/.aliases" "$SDCARD"
-
 if [ ! -d "$ROOT_HOME" ]; then
     mkdir -p "$ROOT_HOME"
     touch "$ROOT_HOME/.bash_history"
     ui_print "   Created root home folder and .bash_history"
+fi
+
+# ROOT_HOME
+if [ -f "$ROOT_HOME/.aliases" ]; then
+    ui_print "   $ROOT_HOME/.aliases found! Backing up to .aliases.bak"
+    mv "$ROOT_HOME/.aliases" "$ROOT_HOME/.aliases.bak"
+fi
+
+# New .aliases
+ui_print "   Installing default .aliases from module to home root"
+cp "$MODPATH/custom/.aliases" "$ROOT_HOME/.aliases"
+
+# SDCard
+if [ -f "$SDCARD/.aliases" ]; then
+    ui_print "   $SDCARD/.aliases found! Backing up to .aliases.baksdcard"
+    mv "$SDCARD/.aliases" "$ROOT_HOME/.aliases.baksdcard"
 fi
 
 if [ ! -d "$Temuxrootmods" ]; then
