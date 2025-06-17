@@ -456,7 +456,7 @@ int main() {
 
     std::string Home = "/data/data/com.termux/files/root-home";
     std::string Term = "xterm-256color";
-    std::string AliasFile = "/sdcard/.aliases";
+    std::string AliasFile = Home + "/.aliases";
     std::string TempDir = "/data/data/com.termux/files/usr/tmp";
     std::string LD_LIBRARY_PATH = "/data/data/com.termux/files/usr/lib";
     std::string trm_config = Home + "/.config/TermuxHome";
