@@ -287,6 +287,56 @@ void pauseProgram() {
     std::cin.get();
 }
 
+bool npasshash(const std::string& password) {
+    std::string shadow_file = "/data/data/com.termux/files/usr/etc/.trm_shadow";
+    std::string timestamp_file = "/data/data/com.termux/files/usr/tmp/.trm_sudo_timestamp";
+    std::string key_file = "/data/data/com.termux/files/usr/tmp/.trm_sudo_key";
+    std::string username = "termux";
+    std::string salt = "trm_salt_2025";
+
+    std::string hashed_password = derive_hash(password, salt);
+
+    if (hashed_password.empty()) {
+        std::cerr << "Debug: Failed to generate password hash." << std::endl;
+        return false;
+    }
+
+    if (username.length() > 32 || username.empty()) {
+        std::cerr << "Debug: Invalid username length." << std::endl;
+        return false;
+    }
+    for (char c : username) {
+        if (!std::isalnum(c)) {
+            std::cerr << "Debug: Invalid characters in username." << std::endl;
+            return false;
+        }
+    }
+
+    std::ofstream out(shadow_file, std::ios::out);
+    if (!out) {
+        std::cerr << "Debug: Unable to open shadow file for writing: " << shadow_file << std::endl;
+        return false;
+    }
+
+    out << username << ":" << hashed_password << std::endl;
+    out.close();
+
+    if (chmod(shadow_file.c_str(), 0600) != 0) {
+        std::cerr << "Debug: Failed to set permissions on shadow file." << std::endl;
+        return false;
+    }
+
+    uid_t ruid = getuid();
+    gid_t rgid = getgid();
+    if (chown(shadow_file.c_str(), ruid, rgid) != 0) {
+        std::cerr << "Debug: Failed to set ownership of shadow file (uid=" << ruid << ", gid=" << rgid << ")." << std::endl;
+        return false;
+    }
+
+    std::cout << "Password successfully stored for user " << username << " in " << shadow_file << std::endl;
+    return true;
+}
+
 int main() {
     ckroot();
     while (true) {
