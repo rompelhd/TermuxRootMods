@@ -1,8 +1,9 @@
 ; Config of TermuxRootMods
 [SHELL]
-shell=bash
-; zsh or bash
+shell=/data/data/com.termux/files/usr/bin/zsh
+; zsh, bash or fish
 
+; Theme mode is very buggy in zsh and fish, at the moment feature only for bash.
 [THEME]
 theme_name=none
 
