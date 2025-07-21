@@ -3,7 +3,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#define VERSION "1.0.20"
+#define VERSION "1.0.21"
+
+extern char **environ;
 
 char *find_su() {
     const char *paths[] = {
@@ -28,7 +30,7 @@ char *find_su() {
 void show_help(const char *prog) {
     printf("%s - Run commands as root or another user\n", prog);
     printf("Usage:\n");
-    printf("  %s [-E] [-u user] command [args...]\n", prog);
+    printf("  %s [options] command [args...]\n", prog);
     printf("Options:\n");
     printf("  -E            Preserve environment variables\n");
     printf("  -u user       Run as another user (requires root)\n");
@@ -97,7 +99,7 @@ int main(int argc, char *argv[]) {
         if (i != argc - 1) strcat(cmd, " ");
     }
 
-    char *args[6];
+    char *args[8];  // su, [user], --interactive, -c, full_cmd, NULL
     int i = 0;
     args[i++] = su_path;
 
@@ -105,6 +107,7 @@ int main(int argc, char *argv[]) {
         args[i++] = user;
     }
 
+    args[i++] = "--interactive";
     args[i++] = "-c";
 
     char full_cmd[1024];
@@ -122,7 +125,6 @@ int main(int argc, char *argv[]) {
         "PATH=/data/data/com.termux/files/usr/bin:/system/bin:/system/xbin:/usr/bin:/sbin",
         "HOME=/root",
         "TERM=xterm-256color",
-        "MAGISK_VER=29",  // Include Magisk version for compatibility
         NULL
     };
 
