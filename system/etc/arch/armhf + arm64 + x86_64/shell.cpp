@@ -560,6 +560,9 @@ int main() {
         } else if (shell_name == "zsh") {
             setenv("ZDOTDIR", TempDir.c_str(), 1);
             execl(Shell.c_str(), Shell.c_str(), (char*)nullptr);
+        } else if (shell_name == "fish") {
+            setenv("XDG_CONFIG_HOME", TempDir.c_str(), 1);
+            execl(Shell.c_str(), Shell.c_str(), (char*)nullptr);
         } else {
             execl(Shell.c_str(), Shell.c_str(), (char*)nullptr);
         }
