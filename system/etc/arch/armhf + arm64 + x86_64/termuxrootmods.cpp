@@ -4,6 +4,13 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+#include <sys/stat.h>
+#include <openssl/sha.h>
+#include <openssl/evp.h> // PKCS5_PBKDF2_HMAC
+#include <iomanip>
+#include <sstream>
+
+#define PBKDF2_ITERATIONS 100000 // From your new code
 
 const std::string configPath = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
 
@@ -42,7 +49,6 @@ std::string fetchRemoteVersion() {
         curl_easy_cleanup(curl);
 
         if (res == CURLE_OK) {
-
             size_t pos = readBuffer.find("\"version\":");
             if (pos != std::string::npos) {
                 size_t start = readBuffer.find("\"", pos + 10) + 1;
@@ -77,6 +83,17 @@ void checkVersion() {
 std::string shell;
 std::string theme_name;
 std::string language;
+
+std::string derive_hash(const std::string& password, const std::string& salt) {
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    PKCS5_PBKDF2_HMAC(password.c_str(), password.size(),
+                      reinterpret_cast<const unsigned char*>(salt.c_str()), salt.size(),
+                      PBKDF2_ITERATIONS, EVP_sha256(), SHA256_DIGEST_LENGTH, hash);
+    std::ostringstream oss;
+    for (size_t i = 0; i < SHA256_DIGEST_LENGTH; ++i)
+        oss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+    return oss.str();
+}
 
 void UpdateConfigVariable(const std::string& variable, const std::string& newValue) {
     std::ifstream fileIn(configPath);
@@ -337,6 +354,18 @@ bool npasshash(const std::string& password) {
     return true;
 }
 
+void createPassword() {
+    std::string password;
+    std::cout << "Enter new password: ";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear input buffer
+    std::getline(std::cin, password); // Use getline to handle spaces in password
+    if (npasshash(password)) {
+        std::cout << "Password created successfully.\n";
+    } else {
+        std::cout << "Failed to create password.\n";
+    }
+}
+
 int main() {
     ckroot();
     while (true) {
@@ -349,7 +378,8 @@ int main() {
         std::cout << "2) Change shell theme\n";
         std::cout << "3) Show config\n";
         std::cout << "4) Edit config\n";
-        std::cout << "5) Exit\n";
+        std::cout << "5) Create password\n";
+        std::cout << "6) Exit\n";
         std::cout << "\nSelect an option: ";
 
         int option;
@@ -373,6 +403,10 @@ int main() {
                 pauseProgram();
                 break;
             case 5:
+                createPassword();
+                pauseProgram();
+                break;
+            case 6:
                 std::cout << "Exiting !!!\n";
                 return 0;
             default:
