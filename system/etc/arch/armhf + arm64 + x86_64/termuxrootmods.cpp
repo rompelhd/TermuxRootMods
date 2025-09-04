@@ -10,6 +10,11 @@
 #include <iomanip>
 #include <sstream>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #define PBKDF2_ITERATIONS 100000 // Number of iterations for PBKDF2
 
 const std::string configPath = "/data/data/com.termux/files/root-home/.config/TermuxRootMods/.trm";
@@ -416,3 +421,4 @@ int main() {
         std::cout << "\n";
     }
 }
+
