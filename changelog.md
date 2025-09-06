@@ -1,4 +1,4 @@
-# v1.0.20 Termux Root Mods - The Way It Should Be, By Rompelhd 🥵
+# v1.0.21 Termux Root Mods - The Way It Should Be, By Rompelhd 🥵
 
 ## 🔐 Security Enhancements
 
