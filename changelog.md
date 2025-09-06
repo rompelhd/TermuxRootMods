@@ -1,3 +1,33 @@
 # v1.0.20 Termux Root Mods - The Way It Should Be, By Rompelhd 🥵
 
-- Removed debug symbols from most binaries as a temporary fix for Magisk 29. sudo su was not working, so we migrated to our own binary. Applied changes to ARMHF and ARM64; x86_64 is pending but expected soon. Improvements to the termuxrootmods binary are planned to be included in the usable binaries, but not yet.
+## 🔐 Security Enhancements
+
+- **Password Hashing System Added**  
+  A new function `npasshash()` has been implemented to securely store passwords:
+  - Uses `PBKDF2` hashing with a fixed salt (`trm_salt_2025`) and 100,000 iterations.
+  - Stores hashes in a `.trm_shadow` file with restricted `0600` permissions.
+  - Protects credentials by avoiding plaintext storage.
+
+---
+
+
+## 🧑‍💻 Magisk and sudo.c Fixes
+
+- **`sudo.c` updated to prioritize the new Magisk path:**  
+  `"/debug_ramdisk/su"` is now the primary `su` binary location, fixing compatibility with recent Magisk versions.
+- **Fixed `sudo su` invocation:**  
+  Updated argument list to:  
+  ```c
+  char *args[8];  // su, [user], --interactive, -c, full_cmd, NULL
+  ```
+
+---
+
+## 🛠 Improvements
+
+- 🔧 Minor improvements in:
+  - `ChangeTheme()` (better shell handling)
+  - `UpdateConfigVariable()` (fallback line creation if missing)
+- 🧼 Cleaner configuration management and shell-specific options.
+
+---
