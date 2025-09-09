@@ -3,6 +3,7 @@
 BIN=$( [ -d /system/xbin ] && echo "/system/xbin" || echo "/system/bin" )
 SDCARD=$( [ -d /sdcard ] && echo "/sdcard" || echo "/storage/emulated/0" )
 ROOT_HOME="/data/data/com.termux/files/root-home"
+TERMUX_LIB_PATH="/data/data/com.termux/files/usr/lib"
 Temuxrootmods="$ROOT_HOME/.config/TermuxRootMods/"
 
 touch "$SDCARD/.customrc"
@@ -58,6 +59,18 @@ copy_file_if_exists() {
 for file in servistatus temps cleaner fsu sudo; do
     copy_file_if_exists "$file"
 done
+
+check_library() {
+    local libname="$1"
+    if ls "$TERMUX_LIB_PATH" | grep -q "$libname"; then
+        ui_print "   $libname found in $TERMUX_LIB_PATH"
+    else
+        ui_print "   $libname NOT FOUND in $TERMUX_LIB_PATH"
+    fi
+}
+
+check_library "libssl"
+check_library "libcurl"
 
 cp -f "$MODPATH/system/etc/mkshrc" "$MODPATH/system/etc/mkshrc"
 chmod 777 "$MODPATH/system/etc/mkshrc"
