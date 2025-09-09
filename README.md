@@ -47,6 +47,16 @@
   These enhancements aim to optimize the usage of Termux on rooted devices, providing users with a more feature-rich and efficient command-line environment.
 </p>
 
+</br> <h2>💖 Donations 💖</h2>
+
+<p><strong>If you enjoy this project and want to support it, thank you!</strong> 🙏</p>
+
+<p>You can make a donation via PayPal:</p>
+
+<p> <a href="https://www.paypal.me/RompelhdYT" target="_blank"> <img src="https://img.shields.io/badge/💰%20Donate-PayPal-blue.svg?logo=paypal" alt="Donate with PayPal" height="32"/> </a> </p>
+
+<p><em>Donations are not required, but they help me keep this project alive, improve it, and dedicate more time to it. Every bit of support means the world to me. Thank you for your trust and generosity!</em> 🙌</p>
+
 </br> <h2>🚨 Disclaimer 🚨</h2>
 
 <p><strong>Use at Your Own Risk</strong></p>
