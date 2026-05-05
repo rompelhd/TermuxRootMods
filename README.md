@@ -13,7 +13,7 @@
       <img src="https://img.shields.io/badge/Build-Stable-green" alt="Build Stable">
     </td>
     <td align="center">
-      <img src="https://img.shields.io/badge/Version-v1.0.21-blue" alt="Version">
+      <img src="https://img.shields.io/badge/Version-v1.0.22-blue" alt="Version">
     </td>
   </tr>
   <tr>
