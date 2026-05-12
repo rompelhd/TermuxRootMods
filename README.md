@@ -43,6 +43,7 @@ It provides a set of lightweight utilities that integrate root access directly i
 <p align="center">
 It edits the <strong>/system/etc/mkshrc</strong> file in Android to call a custom binary written in C++, which we use to customize and launch a shell such as bash.
 </p>
+<br>
 
 <p align="center">
 <strong>⚠️ This is NOT an official Termux project.</strong><br>
